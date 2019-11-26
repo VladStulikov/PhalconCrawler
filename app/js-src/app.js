@@ -99,8 +99,9 @@ export default function PhalconCrawler () {
 		setErrorModalOpen (false);
 		setErrorModalText("");
 	};
-	
+		
 	const onStartCrawlClick = () => {		
+		setIsIncorrectURL(false);
 		if (!validator.isURL(urlToCrawl)) 
 			setIsIncorrectURL(true);
 		else {

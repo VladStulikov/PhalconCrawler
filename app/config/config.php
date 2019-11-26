@@ -26,7 +26,6 @@ return new \Phalcon\Config([
     ],
         
     'crawler' => [
-        'uriToCrawl' => "https://agencyanalytics.com",
         'maxPagesToCrawl' => 5,
         'modules' => ["ImgCrawlerModule","LinksCrawlerModule","NumOfWordsCrawlerModule","TitlesCrawlerModule"],    
     ],    
