@@ -22,18 +22,18 @@ class APIController extends Controller
         $curlError = curl_error($curl);
         
         if ($curlError)
-            throw new Exception($curlError. " for ".$url);
+            throw new Exception($curlError);
             
         $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);             
         
-        if ($status != 200)
-            throw new Exception("HTTP code: ".$status." for ".$url);
+        if ($status >= 400)
+            throw new Exception("HTTP code: ".$status);
 
         if (empty($html))    
-            throw new Exception("Empty response for ".$url);
+            throw new Exception("Empty response for the page");
         
         if (!@$dom->loadHTML($html))
-            throw new Exception("Failed to parse ".$url);
+            throw new Exception("Failed to parse the page");
 
         $crawlerModulesList = $this->config->path("crawler.modules");    
             
@@ -50,15 +50,31 @@ class APIController extends Controller
             }
         }
         
+        $result["httpCode"] = $status;
+        
         return $result;
     }
     
     public function crawlAction()
-    {
+    {        
+        try {
+            $data = $this->request->getJsonRawBody();
+            $urlToCrawl = $data->{"urlToCrawl"};
+        } catch (Exception $e) {
+            $this->response->setJsonContent(
+                [
+                    'url' => $urlToCrawl,    
+                    'success' => false,
+                    'status' => "Parameters expected are: urlToCrawl(string), nothing passed in",
+                ]
+            );
+            return $this->response;
+        }
+     
         $pageStatuses = array();
         
         try {
-            $rootPageInfo = $this->crawlPage($this->config->path("crawler.uriToCrawl"));
+            $rootPageInfo = $this->crawlPage($urlToCrawl);
             
             $numOfPagesCrawled = 0;
             $numOfImages = $rootPageInfo["imgCount"];
@@ -77,8 +93,10 @@ class APIController extends Controller
 
             while ($i < $limit) {
                 try {
-                    $pageInfo = $this->crawlPage($internalLinks[$i]);
                     $numOfPagesCrawled++;
+                    
+                    $pageInfo = $this->crawlPage($internalLinks[$i]);
+                    
                     $numOfImages += $pageInfo["imgCount"];
                     $numOfIntLinks += $pageInfo["links"]["intLinksCount"];
                     $numOfExtLinks += $pageInfo["links"]["extLinksCount"];
@@ -87,14 +105,16 @@ class APIController extends Controller
                     $totalTitleLength += $pageInfo["titleLength"]; 
                     
                     $pageStatuses[] = array (
+                        "url" => $internalLinks[$i],   
                         "success" => true,
-                        "status" => "Successfull",
+                        "message" => "HTTP code: ".$pageInfo["httpCode"],
                     );
                     
                 } catch(Exception $e) {
                     $pageStatuses[] = array (
+                        "url" => $internalLinks[$i],   
                         "success" => false,
-                        "status" => $e->getMessage(),    
+                        "message" => $e->getMessage(),    
                     );
                 }
                 $i++;
@@ -102,6 +122,7 @@ class APIController extends Controller
 
             $this->response->setJsonContent(
                 [
+                    'url' => $urlToCrawl,
                     'success' => true,
                     'status' => "Successfull",
                     'numOfPagesCrawled' => $numOfPagesCrawled,
@@ -118,8 +139,9 @@ class APIController extends Controller
         } catch (Exception $e) {
             $this->response->setJsonContent(
                 [
+                    'url' => $urlToCrawl,
                     'success' => false,
-                    'status' => $e->getMessage(),
+                    'message' => $e->getMessage(),
                 ]
             );               
         }

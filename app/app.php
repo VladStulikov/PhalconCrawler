@@ -17,7 +17,7 @@ $app->get('/', function () {
 $APICollection = new \Phalcon\Mvc\Micro\Collection();
 $APICollection->setHandler('APIController', true);
 $APICollection->setPrefix('/API');
-$APICollection->get('/crawl', 'crawlAction');
+$APICollection->post('/crawl', 'crawlAction');
 $app->mount($APICollection);
 
 /**
