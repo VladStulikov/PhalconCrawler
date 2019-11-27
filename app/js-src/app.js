@@ -102,7 +102,7 @@ export default function PhalconCrawler () {
 		
 	const onStartCrawlClick = () => {		
 		setIsIncorrectURL(false);
-		if (!validator.isURL(urlToCrawl)) 
+		if (!validator.isURL(urlToCrawl,{ require_protocol: true })) 
 			setIsIncorrectURL(true);
 		else {
 			setLoading(true);

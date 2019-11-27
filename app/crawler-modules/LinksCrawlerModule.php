@@ -26,7 +26,7 @@ class LinksCrawlerModule implements ICrawlerModule {
         $extLinksList = array();
         
         $host = parse_url($rootURL,  PHP_URL_HOST);
-        $re = "/(?:.*".str_replace(".", "\.",$host).".*)|(?:^\\/.*$)/m";
+        $re = "/(?:.*".str_replace(".", "\\.",$host).".*)|(?:^\\/.*$)/m";
         
         foreach($linkNodesList as $linkNode) {
             $link = $linkNode->getAttribute('href');
