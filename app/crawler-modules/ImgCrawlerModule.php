@@ -12,7 +12,7 @@ class ImgCrawlerModule implements ICrawlerModule {
         return "imgCount";
     }    
     
-    public function handle ($url, $dom)
+    public function handle ($rootURL, $url, $dom)
     {
         $linkNodesList = $dom->getElementsByTagName('img');
         

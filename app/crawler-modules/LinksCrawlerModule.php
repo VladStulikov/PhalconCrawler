@@ -16,7 +16,7 @@ class LinksCrawlerModule implements ICrawlerModule {
         return "links";
     }    
     
-    public function handle ($url, $dom)
+    public function handle ($rootURL, $url, $dom)
     {
         $result = array();
         
@@ -25,8 +25,8 @@ class LinksCrawlerModule implements ICrawlerModule {
         $intLinksList = array();
         $extLinksList = array();
         
-        $host = parse_url($url,  PHP_URL_HOST);
-        $re = "/(?:.*".str_replace(".", "\\.",$host).".*)|(?:^\\/.*$)/m";
+        $host = parse_url($rootURL,  PHP_URL_HOST);
+        $re = "/(?:.*".str_replace(".", "\.",$host).".*)|(?:^\\/.*$)/m";
         
         foreach($linkNodesList as $linkNode) {
             $link = $linkNode->getAttribute('href');
@@ -34,7 +34,7 @@ class LinksCrawlerModule implements ICrawlerModule {
             if ($link == "/")
                 continue;
             
-            if (substr($link,0,1) == "/" || preg_match($re, $link)) {
+            if (preg_match($re, $link)) {
                 $fullURL = substr($link,0,1) == "/" ? $url.$link : $link;
                 if (filter_var($fullURL, FILTER_VALIDATE_URL) !== FALSE)
                     $intLinksList[] = $fullURL;

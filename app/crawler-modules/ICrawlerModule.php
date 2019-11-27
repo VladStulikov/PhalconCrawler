@@ -10,5 +10,5 @@ interface ICrawlerModule {
      *  accepts: $url - URL to be crawled
      *           $dom - parsed HTML document
      */
-    public function handle($url, $dom);    
+    public function handle($rootURL, $url, $dom);    
 }

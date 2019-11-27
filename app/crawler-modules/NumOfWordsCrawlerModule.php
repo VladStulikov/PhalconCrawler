@@ -12,7 +12,7 @@ class NumOfWordsCrawlerModule implements ICrawlerModule {
         return "wordsCount";
     }    
     
-    public function handle ($url, $dom)
+    public function handle ($rootURL, $url, $dom)
     {
         $body = $dom->getElementsByTagName('body');
         

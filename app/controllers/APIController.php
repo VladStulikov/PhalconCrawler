@@ -5,7 +5,7 @@ use Phalcon\Mvc\Controller;
 
 class APIController extends Controller
 {        
-    private function crawlPage($url) 
+    private function crawlPage($rootURL, $url) 
     {
         $dom = new DOMDocument();
         
@@ -49,7 +49,7 @@ class APIController extends Controller
                 if (key_exists($moduleName, $result))
                     throw new Exception ("Duplicating Crawler Modules Name: ".$moduleName);
                     
-                $result[$moduleName] = $crawlerModule->handle($url, $dom);
+                    $result[$moduleName] = $crawlerModule->handle($rootURL, $url, $dom);
             }
         }
         
@@ -77,7 +77,7 @@ class APIController extends Controller
         $pageStatuses = array();
         
         try {
-            $rootPageInfo = $this->crawlPage($urlToCrawl);
+            $rootPageInfo = $this->crawlPage($urlToCrawl, $urlToCrawl);
             
             $numOfPagesCrawled = 1;
             $numOfImages = $rootPageInfo["imgCount"];
@@ -104,7 +104,7 @@ class APIController extends Controller
                 try {
                     $numOfPagesCrawled++;
                     
-                    $pageInfo = $this->crawlPage($internalLinks[$i]);
+                    $pageInfo = $this->crawlPage($urlToCrawl, $internalLinks[$i]);
                     
                     $numOfImages += $pageInfo["imgCount"];
                     $numOfIntLinks += $pageInfo["links"]["intLinksCount"];

@@ -12,7 +12,7 @@ class TitlesCrawlerModule implements ICrawlerModule {
         return "titleLength";
     }    
     
-    public function handle ($url, $dom)
+    public function handle ($rootURL,$url, $dom)
     {
         $titleElements = $dom->getElementsByTagName('title');
         
