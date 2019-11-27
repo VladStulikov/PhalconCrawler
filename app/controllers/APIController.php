@@ -13,6 +13,8 @@ class APIController extends Controller
         
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_AUTOREFERER, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array("User-agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0"));
     
         $time_start = microtime(true); 
         $html = curl_exec($curl);
