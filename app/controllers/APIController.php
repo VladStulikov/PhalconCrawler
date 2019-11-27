@@ -12,6 +12,7 @@ class APIController extends Controller
         $result = array();
         
         $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_AUTOREFERER, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array("User-agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0"));
@@ -78,7 +79,7 @@ class APIController extends Controller
         try {
             $rootPageInfo = $this->crawlPage($urlToCrawl);
             
-            $numOfPagesCrawled = 0;
+            $numOfPagesCrawled = 1;
             $numOfImages = $rootPageInfo["imgCount"];
             $numOfIntLinks = $rootPageInfo["links"]["intLinksCount"];
             $numOfExtLinks = $rootPageInfo["links"]["extLinksCount"];
@@ -89,9 +90,15 @@ class APIController extends Controller
             $internalLinks = $rootPageInfo["links"]["intLinks"];
             $numOfInternalLinks = count($internalLinks);
             
+            $pageStatuses[] = array (
+                "url" => $urlToCrawl,
+                "success" => true,
+                "message" => "HTTP code: ".$rootPageInfo["httpCode"],
+            );
+            
             $limit = min($numOfInternalLinks, $this->config->path("crawler.maxPagesToCrawl"));
             
-            $i = 0;
+            $i = 1;
 
             while ($i < $limit) {
                 try {
