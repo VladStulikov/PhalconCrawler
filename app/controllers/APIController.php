@@ -35,7 +35,7 @@ class APIController extends Controller
         if (empty($html))    
             throw new Exception("Empty response for the page");
         
-        if (!@$dom->loadHTML($html))
+        if (!@$dom->loadHTML($html,LIBXML_PARSEHUGE))
             throw new Exception("Failed to parse the page");
 
         $crawlerModulesList = $this->config->path("crawler.modules");    
